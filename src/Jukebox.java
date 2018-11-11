@@ -1,9 +1,11 @@
+
 /*
  *    Copyright (c) The League of Amazing Programmers 2013-2018
  *    Level 1
  */
 
-
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -11,7 +13,10 @@ import java.net.URL;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import javazoom.jl.player.advanced.AdvancedPlayer;
@@ -19,32 +24,63 @@ import javazoom.jl.player.advanced.AdvancedPlayer;
 /* 1. Download the JavaZoom jar from here: http://bit.ly/javazoom
  * 2. Right click your project and add it as an External JAR (Under Java Build Path > Libraries).*/
 
-public class Jukebox implements Runnable {
+public class Jukebox implements Runnable, ActionListener {
 
-	public static void main(String[] args) {
-		SwingUtilities.invokeLater(new Jukebox());
+	JFrame frame = new JFrame();
+	JButton song1 = new JButton();
+	JButton song2 = new JButton();
+	JButton stop = new JButton();
+	JPanel panel = new JPanel();
+
+	public void run() {
+
+		song1.addActionListener(this);
+		song1.setText("Star Spangled Banner");
+		song2.addActionListener(this);
+		song2.setText("Zeze");
+		stop.addActionListener(this);
+		stop.setText("pause");
+		frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
+		
+		panel.add(song2);
+		panel.add(song1);
+		panel.add(stop);
+		frame.add(panel);
+		frame.setVisible(true);
+		frame.pack();
 	}
 
-           public void run() {
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == song1) {
+			Song music = new Song("http://www.mostfreebies.com/Music/StarSpangledBanner.mp3");
+			music.play();
+			if (e.getSource() == stop) {
+				music.stop();
+			}
+		}
+		if (e.getSource() == song2) {
+			Song music2 = new Song(
+					"https://www.naijaexclusive.net/wp-content/uploads/2018/10/Kodak_Black_-_Zeze_Ft_Travis_Scott_Offset__NaijaExclusive.net.mp3");
+			music2.play();
+			if (e.getSource() == stop) {
+				music2.stop();
+			}
+		}
 
-		// 3. Find an mp3 on your computer or on the Internet.
-		// 4. Create a Song
+	}
 
-		// 5. Play the Song
-
-		/*
-		 * 6. Create a user interface for your Jukebox so that the user can to
-		 * choose which song to play. You can use can use a different button for
-		 * each song, or a picture of the album cover. When the button or album
-		 * cover is clicked, stop the currently playing song, and play the one
-		 * that was selected.
-		 */
-          }
 	/* Use this method to add album covers to your Panel. */
 	private JLabel loadImage(String fileName) {
 		URL imageURL = getClass().getResource(fileName);
 		Icon icon = new ImageIcon(imageURL);
 		return new JLabel(icon);
+	}
+
+	public static void main(String[] args) {
+		SwingUtilities.invokeLater(new Jukebox());
+
+		Jukebox songPlayer = new Jukebox();
+		songPlayer.run();
 	}
 
 }
@@ -57,8 +93,7 @@ class Song {
 	private InputStream songStream;
 
 	/**
-	 * Songs can be constructed from files on your computer or Internet
-	 * addresses.
+	 * Songs can be constructed from files on your computer or Internet addresses.
 	 * 
 	 * Examples: <code> 
 	 * 		new Song("everywhere.mp3"); 	//from default package 
@@ -132,5 +167,5 @@ class Song {
 			return this.getClass().getResourceAsStream(songAddress);
 		}
 	}
-}
 
+}
